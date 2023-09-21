@@ -329,6 +329,56 @@ function checkStudentExists(files, obj, fname, lname, res) {
 
 }
 
+/**
+ * @swagger
+ * /students/byLastName/{last_name}:
+ *   get:
+ *     summary: Get students by last name.
+ *     description: Use this endpoint to retrieve students based on their last name.
+ *     parameters:
+ *       - name: last_name
+ *         description: Student's last name
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success. An array of students with the specified last name has been retrieved.
+ *       404:
+ *         description: Error. No students found with the specified last name.
+ */
+app.get('/students/byLastName/:last_name', function (req, res) {
+  var searchLastName = req.params.last_name;
+  var arr = [];
+
+  glob("students/*.json", null, function (err, files) {
+    if (err) {
+      return res.status(500).send({ "message": "error - internal server error" });
+    }
+
+    files.forEach(function (file) {
+      var data = fs.readFileSync(file, 'utf8');
+      var student = JSON.parse(data);
+
+      if (student.last_name === searchLastName) {
+        arr.push(student);
+      }
+    });
+
+    if (arr.length > 0) {
+      var obj = {};
+      obj.students = arr;
+      return res.status(200).send(obj);
+    } else {
+      var rsp_obj = {};
+      rsp_obj.message = 'No students found with the specified last name.';
+      return res.status(404).send(rsp_obj);
+    }
+  });
+});
+
+
 app.listen(5678); //start the server
 console.log('Server is running...');
 console.log('Webapp:   http://localhost:5678/')
