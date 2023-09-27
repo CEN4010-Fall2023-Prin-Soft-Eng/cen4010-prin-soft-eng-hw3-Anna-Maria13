@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Display Student</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+  <label for="record_id">Rrecord_id:</label>
+  <input type="text" id="record_id" name="record_id"><br><br>
+
+  <button onclick="getStudent()">Submit</button>
+  <br>
+  <br>
+  <div id="mydiv" name="mydiv"></div>
+  <script>
+
+    function getStudent() {
+      var record_id = $("#record_id").val();
+
+      $.ajax({
+        url: "http://localhost:5678/students/"+record_id,
+        type: "get",
+        success: function (response) {
+          var formattedJson = JSON.stringify(JSON.parse(response), null, 2); // Parse the JSON string and then stringify it with indentation
+                    $("#mydiv").html('<pre>' + formattedJson + '</pre>');
+        },
+        error: function (xhr) {
+          console.log(xhr.responseText)
+          $("#mydiv").text('error: ' + xhr.responseText);
+        }
+      });
+    }
+
+  </script>
+
+</body>
+
+</html>
+  
