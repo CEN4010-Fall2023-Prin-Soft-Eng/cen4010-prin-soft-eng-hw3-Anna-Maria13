@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>List All Students</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+  <button onclick="getStudents()">Get All Students</button>
+  <br>
+  <br>
+  <div id="mydiv" name="mydiv"></div>
+  <script>
+
+    function getStudents() {
+      $.ajax({
+        url: "http://localhost:5678/students", // URL to retrieve all students
+        dataType: "json", // Set the expected data type to JSON
+        type: "get",
+        success: function (response) {
+          var formattedJson = JSON.stringify(response, null, 2);
+          $("#mydiv").html('<pre>' + formattedJson + '</pre>');
+        },
+        error: function (xhr) {
+          console.log(xhr.responseText);
+          $("#mydiv").text('error: ' + xhr.responseText);
+        }
+      });
+    }
+
+  </script>
+
+</body>
+
+</html>
