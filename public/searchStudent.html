@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Search Student by Last Name</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <h2>Search Student by Last Name</h2>
+
+  <label for="last_name">Last Name:</label>
+  <input type="text" id="last_name" name="last_name">
+  <button onclick="return filterStudentsByLastName()">Filter by Last Name</button>
+  <br><br>
+
+  <div id="mydiv" name="mydiv"></div>
+
+  <script>
+    function filterStudentsByLastName() {
+      var last_name = $("#last_name").val();
+
+      $.ajax({
+        url: "http://localhost:5678/students/byLastName/" + last_name, // URL to filter students by last name
+        dataType: "json", // Set the expected data type to JSON
+        type: "get",
+        success: function (response) {
+          if (response.students && response.students.length > 0) {
+            var student = response.students[0]; // Get the first student in the array
+            var formattedStudent = `
+              <h3>Student Information:</h3>
+              <p>Record ID: ${student.record_id}</p>
+              <p>First Name: ${student.first_name}</p>
+              <p>Last Name: ${student.last_name}</p>
+              <p>GPA: ${student.gpa}</p>
+              <p>Enrolled: ${student.enrolled}</p>
+            `;
+            $("#mydiv").html(formattedStudent);
+          } else {
+            $("#mydiv").text("No student found with the last name '" + last_name + "'.");
+          }
+        },
+        error: function (xhr) {
+          console.log(xhr.responseText);
+          $("#mydiv").text('error: ' + xhr.responseText);
+        }
+      });
+
+      return false; // Prevent the default form submission
+    }
+  </script>
+</body>
+
+</html>
